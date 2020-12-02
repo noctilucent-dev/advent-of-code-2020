@@ -1,34 +1,35 @@
 const fs = require('fs');
+const wu = require("../node_modules/wu");
 
 const content = fs.readFileSync('input.txt', 'utf-8');
 
 const expenses = content.split('\n').map(Number);
 
-function part1(expenses) {
+function* pairs(expenses) {
     for(var i=0; i<expenses.length-1; i++) {
         for (var j=i+1; j<expenses.length; j++) {
-            if (expenses[i]+expenses[j] === 2020) {
-                return expenses[i]*expenses[j];
-            }
+            yield [expenses[i], expenses[j], i];
         }
     }
-    throw new Error('Could not find expenses summing to 2020');
+}
+
+function part1(expenses) {
+    const [a, b] = wu(pairs(expenses))
+        .filter(([x, y]) => x + y === 2020)
+        .next().value;
+    
+    return a * b;
 }
 
 function part2(expenses) {
-    for(var i=0; i<expenses.length-1; i++) {
-        for (var j=i+1; j<expenses.length-2; j++) {
-            // simple optimisation to skip pairs already too large
-            if (expenses[i]+expenses[j] >= 2020) continue;
+    const p = wu(pairs(expenses))
+        .filter(([a, b]) => a + b < 2020);
 
-            for (var k=j+1; k<expenses.length; k++) {
-                if (expenses[i]+expenses[j]+expenses[k] === 2020) {
-                    return expenses[i]*expenses[j]*expenses[k];
-                }
-            }
+    for(const [a, b, i] of p) {
+        for (var j=i+2; j<expenses.length; j++) {
+            if (a+b+expenses[j] === 2020) return a*b*expenses[j];
         }
     }
-    throw new Error('Could not find expenses summing to 2020');
 }
 
 console.log(part1(expenses));

@@ -3,3 +3,6 @@
 
 ## VSCode files
 .vscode
+
+## NPM
+node_modules
