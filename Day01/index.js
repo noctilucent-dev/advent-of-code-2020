@@ -1,5 +1,5 @@
 const fs = require('fs');
-const wu = require("../node_modules/wu");
+const wu = require("wu");
 
 const content = fs.readFileSync('input.txt', 'utf-8');
 
