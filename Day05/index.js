@@ -21,4 +21,4 @@ seatNums.sort((a, b) => a - b);
 let i;
 for (i=0; seatNums[i] === seatNums[i+1] - 1; i++);
 
-console.log(seatNums[i]+1); // 770 is too high, 480 too low
+console.log(seatNums[i]+1);
