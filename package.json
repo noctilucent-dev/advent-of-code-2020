@@ -8,7 +8,8 @@
     "day2": "cd Day02 && node index.js",
     "day3": "cd Day03 && node index.js",
     "day4": "cd Day04 && node index.js",
-    "day5": "cd Day05 && node index.js"
+    "day5": "cd Day05 && node index.js",
+    "day6": "cd Day06 && node index.js"
   },
   "repository": {
     "type": "git",
