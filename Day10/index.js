@@ -3,84 +3,63 @@ const fs = require('fs');
 const content = fs.readFileSync('input.txt', 'utf-8');
 
 const adaptors = content.trim().split('\n').map(Number);
-
 adaptors.sort((a, b) => a-b);
+
+const target = adaptors[adaptors.length-1] + 3;
+
+adaptors.unshift(0);
+adaptors.push(target);
 
 // Part 1
 function part1(adaptors) {
     let singles = 0;
     let triples = 0;
-    let previous = 0;
 
-    adaptors.push(adaptors[adaptors.length-1]+3);
-
-    for(let i=0; i<adaptors.length; i++) {
-        const diff = adaptors[i] - previous;
+    for(let i=1; i<adaptors.length; i++) {
+        const diff = adaptors[i] - adaptors[i-1];
         if (diff === 1) singles++;
         if (diff === 3) triples++;
         previous = adaptors[i];
     }
 
-    console.log(`${singles} x 1 Jolt, ${triples} x 3 Jolts`);
-
-    adaptors.pop();
-
     return singles * triples;
 }
 
-console.log(part1(adaptors));
+console.log(`Part 1: ${part1(adaptors)}`);
 
 // Part 2
-const target = Math.max(...adaptors) + 3;
-const next = {};
+function constructGraph(adaptors) {
+    const graph = {};
 
-adaptors.unshift(0);
-adaptors.push(target);
-
-for (let i=0; i<adaptors.length; i++) {
-    const vals = [];
-
-    for (let j=i+1; adaptors[j] - adaptors[i] <= 3; j++) {
-        vals.push(adaptors[j]);
+    for (let i=0; i<adaptors.length; i++) {
+        const vals = [];
+    
+        for (let j=i+1; adaptors[j] - adaptors[i] <= 3; j++) {
+            vals.push(adaptors[j]);
+        }
+    
+        graph[adaptors[i]] = vals;
     }
 
-    next[adaptors[i]] = vals;
+    return graph;
 }
 
-const paths = {};
+function findPath(start, graph, pathLengths) {
+    if (pathLengths[start] !== undefined) return pathLengths[start];
 
-function findPath(start) {
-    // console.log(`Finding path for ${start}`);
+    const length = start === target ?
+        1 :
+        graph[start]
+            .map(r => findPath(r, graph, pathLengths))
+            .reduce((a, b) => a+b, 0);
 
-    if (start === target) {
-        console.log('Reached end');
-        paths[start] = 1;
-    }
-    else if (next[start].length === 0) {
-        console.log('Dead end');
-        paths[start] = -1;
-    }
-
-    else if (next[start].length === 1) {
-        const r = next[start][0];
-        if (paths[r] === undefined) findPath(next[start][0]);
-        paths[start] = paths[r];
-    }
-
-    else {
-        paths[start] = next[start].map(r => {
-            if (paths[r] === undefined) return findPath(r);
-            return paths[r];
-        }).reduce((a, b) => a+b, 0);
-    }
-
-    // console.log(`Path for ${start} is ${paths[start]}`);
-
-    return paths[start];
+    pathLengths[start] = length;
+    return length;
 }
 
-findPath(0, next, paths);
+const graph = constructGraph(adaptors);
+const pathLengths = {};
 
-// console.log(next);
-// console.log(paths);
-console.log(paths[0]);
+findPath(0, graph, pathLengths);
+
+console.log(`Part 2: ${pathLengths[0]}`);
