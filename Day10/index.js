@@ -19,7 +19,6 @@ function part1(adaptors) {
         const diff = adaptors[i] - adaptors[i-1];
         if (diff === 1) singles++;
         if (diff === 3) triples++;
-        previous = adaptors[i];
     }
 
     return singles * triples;
