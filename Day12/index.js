@@ -1,12 +1,6 @@
 const fs = require('fs');
 
-let content = fs.readFileSync('input.txt', 'utf-8');
-
-// content = `F10
-// N3
-// F7
-// R90
-// F11`;
+const content = fs.readFileSync('input.txt', 'utf-8');
 
 const instructions = content.trim().split('\n');
 
@@ -50,11 +44,11 @@ function followPart1(instructions) {
         }
     }
 
-    return [northing, easting];
+    return [easting, northing];
 }
 
 function followPart2(instructions) {
-    let waypoint = [10, 1];
+    let waypoint = [10, 1]; // [E, N]
     let northing = 0;
     let easting = 0;
 
@@ -97,13 +91,13 @@ function followPart2(instructions) {
         }
     }
 
-    return [northing, easting];
+    return [easting, northing];
 }
 
-let [n, e] = followPart1(instructions);
-console.log(Math.abs(n) + Math.abs(e));
+const manhattan = ([e, n]) => Math.abs(e) + Math.abs(n);
 
-[n, e] = followPart2(instructions);
-console.log(`${n}N, ${e}E`);
-console.log(Math.abs(n) + Math.abs(e));
-// 30600 too low
+const part1 = followPart1(instructions);
+console.log(manhattan(part1));
+
+const part2 = followPart2(instructions);
+console.log(manhattan(part2));
